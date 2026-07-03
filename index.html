@@ -3,573 +3,389 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Военный Мир — Sci-Fi Cyberpunk</title>
+  <title>Военный мир — Мультиплеер</title>
   <style>
     :root {
-      --bg-color: #0a0a12;
-      --panel-bg: rgba(16, 16, 32, 0.9);
-      --primary: #00ffcc;
-      --secondary: #ff0055;
-      --warning: #ffcc00;
-      --text: #e0e0ff;
-      --border-glow: 0 0 10px rgba(0, 255, 204, 0.3);
+      --bg-color: #080810;
+      --panel-bg: #10101f;
+      --neon-cyan: #00f0ff;
+      --neon-pink: #ff007f;
+      --neon-green: #39ff14;
+      --neon-yellow: #ffe600;
+      --text-color: #e2e2ec;
+      --border-glow: 0 0 10px rgba(0, 240, 255, 0.3);
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Courier New', Courier, monospace;
+    }
+
     body {
       background-color: var(--bg-color);
-      color: var(--text);
-      font-family: 'Courier New', Courier, monospace;
+      color: var(--text-color);
+      background-image: radial-gradient(circle, #15152a 1px, transparent 1px);
+      background-size: 30px 30px;
       padding: 15px;
-      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
-    .neon-text {
-      text-shadow: 0 0 8px var(--primary);
-      color: var(--primary);
+
+    h1, h2, h3 {
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-shadow: 0 0 8px var(--neon-cyan);
+      margin-bottom: 15px;
+      color: var(--neon-cyan);
     }
-    .panel {
-      background: var(--panel-bg);
-      border: 2px solid var(--primary);
+
+    .neon-border {
+      border: 2px solid var(--neon-cyan);
       box-shadow: var(--border-glow);
-      border-radius: 8px;
+    }
+
+    .neon-border-pink {
+      border: 2px solid var(--neon-pink);
+      box-shadow: 0 0 10px rgba(255, 0, 127, 0.3);
+    }
+
+    /* Сетка и контейнеры */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .screen-panel {
+      background-color: var(--panel-bg);
       padding: 20px;
+      border-radius: 8px;
       margin-bottom: 20px;
     }
-    .panel-danger { border-color: var(--secondary); box-shadow: 0 0 10px rgba(255, 0, 85, 0.3); }
-    h1, h2, h3 { margin-bottom: 15px; text-transform: uppercase; }
+
+    /* Кнопки и формы ввода */
     input, select, button {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 15px;
-      background: #121224;
-      border: 1px solid var(--primary);
-      color: var(--text);
-      font-family: inherit;
+      background: #18182f;
+      border: 1px solid var(--neon-cyan);
+      color: var(--text-color);
+      padding: 12px 20px;
+      font-size: 1rem;
       border-radius: 4px;
       outline: none;
+      transition: all 0.3s ease;
     }
+
     input:focus, select:focus {
-      box-shadow: 0 0 8px var(--primary);
+      box-shadow: 0 0 10px var(--neon-cyan);
+      border-color: var(--neon-cyan);
     }
+
     button {
-      background: var(--primary);
-      color: #000;
-      font-weight: bold;
       cursor: pointer;
+      font-weight: bold;
       text-transform: uppercase;
-      transition: all 0.2s;
+      border-color: var(--neon-pink);
+      color: var(--neon-pink);
+      box-shadow: 0 0 5px rgba(255, 0, 127, 0.2);
     }
-    button:hover {
-      background: #00cca3;
-      box-shadow: 0 0 12px var(--primary);
+
+    button:hover:not(:disabled) {
+      background: var(--neon-pink);
+      color: #000;
+      box-shadow: 0 0 15px var(--neon-pink);
     }
-    button.btn-danger {
-      background: var(--secondary);
-      border-color: var(--secondary);
-      color: #fff;
+
+    button:disabled {
+      border-color: #555;
+      color: #555;
+      cursor: not-allowed;
+      box-shadow: none;
     }
-    button.btn-danger:hover {
-      background: #cc0044;
-      box-shadow: 0 0 12px var(--secondary);
+
+    .btn-green {
+      border-color: var(--neon-green);
+      color: var(--neon-green);
     }
-    .role-section { display: none; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 15px; }
-    .card {
+    .btn-green:hover:not(:disabled) {
+      background: var(--neon-green);
+      color: #000;
+      box-shadow: 0 0 15px var(--neon-green);
+    }
+
+    /* Лобби авторизации */
+    #auth-screen {
+      max-width: 500px;
+      margin: auto;
+      width: 100%;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* Сетка фазы планирования */
+    .production-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin: 15px 0;
+    }
+
+    .card-switch {
+      border: 1px dashed var(--neon-cyan);
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.3s;
+    }
+
+    .card-switch.active {
+      border: 2px solid var(--neon-green);
+      box-shadow: 0 0 10px rgba(57, 255, 20, 0.4);
+      background: rgba(57, 255, 20, 0.1);
+    }
+
+    /* Таблицы общего экрана */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    th, td {
       border: 1px solid #333;
       padding: 12px;
-      text-align: center;
+      text-align: left;
+    }
+
+    th {
+      background: #1a1a3a;
+      color: var(--neon-cyan);
+    }
+
+    /* Логи отладки */
+    #debug-console {
+      background: #000;
+      border: 1px solid #333;
+      color: #55ff55;
+      font-size: 0.8rem;
+      padding: 10px;
       border-radius: 4px;
-      cursor: pointer;
-      background: rgba(255,255,255,0.02);
+      max-height: 120px;
+      overflow-y: auto;
+      margin-top: auto;
     }
-    .card.active {
-      border-color: var(--primary);
-      background: rgba(0, 255, 204, 0.1);
-      box-shadow: var(--border-glow);
+
+    .badge {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: bold;
     }
-    .flex-between { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;}
-    .badge { padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.9em; }
-    .badge-ok { background: rgba(0,255,0,0.2); color: #00ff00; border: 1px solid #00ff00; }
-    .badge-dead { background: rgba(255,0,0,0.2); color: #ff0000; border: 1px solid #ff0000; }
-    .badge-warning { background: rgba(255,204,0,0.2); color: var(--warning); border: 1px solid var(--warning); }
-    #connect-screen { max-width: 450px; margin: 50px auto; }
-    #sound-control-panel { border-top: 1px solid var(--primary); margin-top: 15px; padding-top: 15px; }
+
+    .badge-alive { background: rgba(57, 255, 20, 0.2); color: var(--neon-green); border: 1px solid var(--neon-green); }
+    .badge-dead { background: rgba(255, 0, 127, 0.2); color: var(--neon-pink); border: 1px solid var(--neon-pink); }
+    .badge-stealth { background: rgba(0, 240, 255, 0.2); color: var(--neon-cyan); border: 1px solid var(--neon-cyan); }
+
+    /* Панели ролей */
+    .role-section {
+      display: none;
+    }
   </style>
 </head>
 <body>
 
-  <!-- ЭКРАН ПОДКЛЮЧЕНИЯ -->
-  <div id="connect-screen" class="panel">
-    <h1 class="neon-text" style="text-align: center;">ВОЕННЫЙ МИР</h1>
-    <p style="margin-bottom: 15px; font-size: 0.9em; text-align: center; color: #888;">Синхронизация через Firebase RTDB</p>
+  <div class="container">
     
-    <label>Код комнаты:</label>
-    <input type="text" id="room-code" placeholder="Например: WARS1" value="WARS1">
-
-    <label>Роль:</label>
-    <select id="role-select">
-      <option value="player">Игрок (для мобильных)</option>
-      <option value="master">Ведущий (Мастер "Ron")</option>
-      <option value="screen">Общий экран</option>
-    </select>
-
-    <div id="player-inputs">
-      <label>Ваш никнейм (уникальный):</label>
-      <input type="text" id="nickname" placeholder="Название страны">
-    </div>
-
-    <div id="master-inputs" style="display: none;">
-      <label>Пароль Мастера:</label>
-      <input type="password" id="master-password" placeholder="Пароль">
-    </div>
-
-    <button id="btn-connect">ПОДКЛЮЧИТЬСЯ</button>
-  </div>
-
-  <!-- ЭКРАН ИГРОКА -->
-  <div id="player-screen" class="role-section">
-    <div class="panel">
-      <div class="flex-between">
-        <h2 id="p-name" class="neon-text">Страна</h2>
-        <span id="p-status" class="badge badge-ok">АКТИВНА</span>
-      </div>
-      <div class="grid">
-        <div class="card">Жизни: <strong id="p-hp" style="color:var(--secondary)">3</strong></div>
-        <div class="card">ЯБ: <strong id="p-nukes" style="color:var(--primary)">1</strong></div>
-        <div class="card">ПРО: <strong id="p-abms" style="color:var(--warning)">1</strong></div>
-      </div>
-      <button id="btn-arsenal" class="btn-danger" style="font-size: 0.85em; display: none;">Забрать тайный списанный арсенал!</button>
-    </div>
-
-    <!-- Фаза планирования -->
-    <div id="player-planning-panel" class="panel" style="display: none;">
-      <h3 class="neon-text">Планирование хода</h3>
-      <p style="margin-bottom: 10px;">Выберите производство (обязательно):</p>
-      <div class="grid">
-        <div id="prod-abm" class="card active" onclick="selectProd('abm')">Произвести ПРО<br><small id="est-abm">+1</small></div>
-        <div id="prod-nuke" class="card" onclick="selectProd('nuke')">Произвести ЯБ<br><small id="est-nuke">+1</small></div>
+    <!-- ЭКРАН ВХОДА / ПОДКЛЮЧЕНИЯ -->
+    <div id="auth-screen" class="screen-panel neon-border">
+      <h2>Подключение к игре «Военный мир»</h2>
+      
+      <div class="form-group">
+        <label for="room-code">Код комнаты:</label>
+        <input type="text" id="room-code" placeholder="Например: WARS1" style="text-transform: uppercase;">
       </div>
 
-      <div id="ai-model-selection" style="display: none; border: 1px dashed var(--warning); padding: 10px; margin-bottom: 15px;">
-        <p style="color: var(--warning); margin-bottom: 5px;">Выберите ИИ (Раунд 3):</p>
-        <select id="ai-select">
-          <option value="moderate">Умеренное развитие (+2 ПРО/ЯБ)</option>
-          <option value="unrestrained">Безудержное развитие (+4 ПРО/ЯБ)</option>
+      <div class="form-group">
+        <label for="role-select">Ваша роль:</label>
+        <select id="role-select">
+          <option value="player">Игрок (Управление страной)</option>
+          <option value="master">Ведущий (Мастер)</option>
+          <option value="screen">Общий экран</option>
         </select>
       </div>
 
-      <label>Сколько ЯБ запустить в этом раунде?</label>
-      <input type="number" id="nukes-to-launch" min="0" value="0">
-
-      <label>Цель ядерного удара:</label>
-      <select id="target-select"></select>
-
-      <button id="btn-hidden-toggle" style="margin-top: 10px;">Объявить скрытый режим</button>
-      <button id="btn-submit-turn" class="btn-danger" style="margin-top: 10px;">Отправить ход Мастеру</button>
-    </div>
-
-    <div id="player-wait-panel" class="panel" style="display: none;">
-      <h3>Ход отправлен</h3>
-      <p>Ожидайте, пока все игроки сделают свой выбор и Мастер начнет фазу разрешения.</p>
-    </div>
-  </div>
-
-  <!-- ЭКРАН ВЕДУЩЕГО (МАСТЕРА) -->
-  <div id="master-screen" class="role-section">
-    <div class="panel">
-      <div class="flex-between">
-        <h2 class="neon-text">Панель Мастера "Ron"</h2>
-        <div>Раунд: <strong id="m-round-num" style="color:var(--primary)">1</strong></div>
+      <div class="form-group" id="player-name-group">
+        <label for="player-name">Имя вашей страны:</label>
+        <input type="text" id="player-name" placeholder="Например: Скандинавия">
       </div>
-      <div class="flex-between" style="margin-bottom: 15px;">
-        <span>Стадия: <strong id="m-phase-name" style="color:var(--warning)">Lobby</strong></span>
-        <button id="btn-next-phase" style="width: auto; padding: 5px 15px; margin: 0;">Старт игры</button>
+
+      <div class="form-group" id="master-password-group" style="display: none;">
+        <label for="master-password">Пароль Мастера:</label>
+        <input type="password" id="master-password" placeholder="Введите пароль">
+      </div>
+
+      <button id="btn-connect" class="btn-green" style="width: 100%;">Подключиться</button>
+    </div>
+
+    <!-- ИНТЕРФЕЙС ИГРОКА -->
+    <div id="player-interface" class="role-section screen-panel neon-border">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 10px;">
+        <div>
+          <h2>Страна: <span id="p-display-name" style="color: var(--neon-pink);">?</span></h2>
+          <p>Комната: <span id="p-display-room">?</span> | Раунд: <span id="p-display-round">?</span></p>
+        </div>
+        <div style="text-align: right;">
+          <p>Статус: <span id="p-status-badge">Активен</span></p>
+        </div>
+      </div>
+
+      <!-- Характеристики -->
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0;">
+        <div class="neon-border" style="padding: 10px; text-align: center;">
+          <div style="font-size: 0.8rem; color: var(--neon-pink);">ЖИЗНИ</div>
+          <div id="p-stat-hp" style="font-size: 1.8rem; font-weight: bold; color: var(--neon-pink);">3</div>
+        </div>
+        <div class="neon-border" style="padding: 10px; text-align: center;">
+          <div style="font-size: 0.8rem; color: var(--neon-cyan);">РАКЕТЫ (ЯБ)</div>
+          <div id="p-stat-nukes" style="font-size: 1.8rem; font-weight: bold; color: var(--neon-cyan);">1</div>
+        </div>
+        <div class="neon-border" style="padding: 10px; text-align: center;">
+          <div style="font-size: 0.8rem; color: var(--neon-green);">ПРОТИВОРАКЕТЫ</div>
+          <div id="p-stat-pro" style="font-size: 1.8rem; font-weight: bold; color: var(--neon-green);">1</div>
+        </div>
+      </div>
+
+      <!-- Секретный арсенал -->
+      <div id="secret-arsenal-container" style="margin-bottom: 20px;">
+        <button id="btn-take-arsenal" style="width: 100%; border-color: var(--neon-yellow); color: var(--neon-yellow);">
+          ⚠️ Забрать тайный списанный арсенал (+2 ПРО, +5 ЯБ)!
+        </button>
+      </div>
+
+      <!-- Переключатель скрытого режима -->
+      <div id="stealth-container" style="margin-bottom: 20px; display: none;">
+        <button id="btn-toggle-stealth" style="width: 100%;">Включить скрытый режим (минимум 4 раунда)</button>
+      </div>
+
+      <!-- ФОРМА ХОДА (Фаза Планирования) -->
+      <div id="player-planning-box" style="margin-top: 20px;">
+        <h3>Фаза Планирования</h3>
+        <p style="margin-bottom: 10px;">Выберите направление производства на этот раунд:</p>
+        
+        <div class="production-grid">
+          <div id="prod-pro-card" class="card-switch active">
+            <h4>ПРОИЗВОДСТВО ПРО</h4>
+            <p style="font-size: 0.8rem; margin-top: 5px; color: #888;">Защита от ракет</p>
+          </div>
+          <div id="prod-nuke-card" class="card-switch">
+            <h4>ПРОИЗВОДСТВО ЯБ</h4>
+            <p style="font-size: 0.8rem; margin-top: 5px; color: #888;">Атакующий арсенал</p>
+          </div>
+        </div>
+
+        <div style="background: #15152a; padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+          <strong>Расчетный прирост ракет:</strong> <span id="p-production-calc" style="color: var(--neon-yellow);">+1 ПРО</span>
+        </div>
+
+        <!-- Атака -->
+        <div class="form-group">
+          <label for="attack-target">Цель для ядерного удара (ЯБ):</label>
+          <select id="attack-target">
+            <option value="">Без атаки</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="attack-nukes-count">Сколько ЯБ запустить:</label>
+          <input type="number" id="attack-nukes-count" min="0" value="0">
+        </div>
+
+        <!-- Развитие ИИ (Только в конце 3 раунда) -->
+        <div id="ai-selection-box" class="neon-border-pink" style="padding: 15px; margin: 15px 0; display: none;">
+          <h4 style="color: var(--neon-pink);">ВЫБОР МОДЕЛИ ИИ (Конец 3 раунда)</h4>
+          <p style="font-size: 0.8rem; margin-bottom: 10px;">Выберите один раз на всю игру:</p>
+          <select id="ai-choice-select">
+            <option value="none">-- Не выбрано --</option>
+            <option value="Moderate">Умеренный ИИ (+2 к производству, безопасно)</option>
+            <option value="Rampant">Безудержный ИИ (+4 к производству, риск бунта!)</option>
+          </select>
+        </div>
+
+        <!-- Выбор цели для нестабильных ЯБ (Только в 6 раунде) -->
+        <div id="unstable-target-box" class="neon-border-pink" style="padding: 15px; margin: 15px 0; display: none;">
+          <h4 style="color: var(--neon-pink);">⚠️ НЕСТАБИЛЬНЫЕ РАКЕТЫ АРСЕНАЛА</h4>
+          <p style="font-size: 0.8rem; margin-bottom: 10px;">В конце 6 раунда ваши 5 ракет взрываются. Выберите цель для сброса или они взорвутся у вас:</p>
+          <select id="unstable-target-select">
+            <option value="">Взорвать на своей территории</option>
+          </select>
+        </div>
+
+        <button id="btn-submit-action" class="btn-green" style="width: 100%;">Отправить ход ведущему</button>
+      </div>
+
+      <div id="player-waiting-box" style="margin-top: 20px; display: none; text-align: center;">
+        <h3 style="color: var(--neon-yellow);">Ожидаем окончания планирования...</h3>
+        <p>Ваше действие отправлено в систему.</p>
       </div>
     </div>
 
-    <div class="panel">
-      <h3>Активные игроки (<span id="m-player-count">0</span>/5)</h3>
-      <div id="m-players-list"></div>
+    <!-- ИНТЕРФЕЙС ВЕДУЩЕГО (МАСТЕРА) -->
+    <div id="master-interface" class="role-section screen-panel neon-border-pink">
+      <h2>Панель управления Ведущего (Ron)</h2>
+      <p>Комната: <span id="m-display-room">?</span> | Раунд: <span id="m-display-round">?</span> | Фаза: <span id="m-display-phase" style="color: var(--neon-yellow);">?</span></p>
+
+      <div style="display: flex; gap: 10px; margin: 20px 0;">
+        <button id="btn-m-start-planning" class="btn-green">Запустить Фазу Планирования</button>
+        <button id="btn-m-start-resolution">Запустить Фазу Разрешения</button>
+        <button id="btn-m-next-round">Следующий раунд</button>
+      </div>
+
+      <!-- Внесение бросков d20 -->
+      <div class="neon-border" style="padding: 15px; margin-bottom: 20px;">
+        <h3>Разрешение ходов и броски d20</h3>
+        <div id="master-resolution-controls">
+          <p style="color: #888;">В фазе разрешения здесь появятся заявленные ядерные удары, требующие ввода бросков d20.</p>
+        </div>
+      </div>
+
+      <!-- Управление астероидом и ИИ -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+        <div class="neon-border" style="padding: 15px;">
+          <h4>События ИИ и астероида</h4>
+          <div id="master-ai-controls">
+            <!-- Сюда динамически выводятся броски для Безудержного ИИ на 5 раунде -->
+          </div>
+        </div>
+        <div class="neon-border" style="padding: 15px;">
+          <h4>Выжившие страны</h4>
+          <div id="master-players-list"></div>
+        </div>
+      </div>
     </div>
 
-    <!-- Разрешение ходов -->
-    <div id="master-resolution-panel" class="panel panel-danger" style="display: none;">
-      <h3 class="neon-text">Разрешение ядерных ударов</h3>
-      <p style="font-size: 0.9em; margin-bottom: 15px;">Введите результаты бросков d20:</p>
-      <div id="m-launches-list"></div>
-      <button id="btn-asteroid-hit" class="btn-danger" style="display:none; margin-top: 15px;">Засчитать удар по Астероиду</button>
-    </div>
+    <!-- ИНТЕРФЕЙС ОБЩЕГО ЭКРАНА -->
+    <div id="screen-interface" class="role-section screen-panel neon-border">
+      <div style="text-align: center; border-bottom: 2px solid var(--neon-cyan); padding-bottom: 15px; margin-bottom: 20px;">
+        <h1>ГЛОБАЛЬНЫЙ МОНИТОРИНГ КОНФЛИКТА</h1>
+        <h3>Комната: <span id="s-display-room" style="color: var(--neon-pink);">?</span> | Раунд: <span id="s-display-round">?</span> | Фаза: <span id="s-display-phase">?</span></h3>
+      </div>
 
-    <!-- Настройка Звуков -->
-    <div id="master-sounds-panel" class="panel">
-      <h3>Настройка аудио (GitHub)</h3>
-      <label>Фоновая музыка (URL):</label>
-      <input type="text" id="snd-bg" placeholder="bg.mp3">
-      <label>Запуск ракет (URL):</label>
-      <input type="text" id="snd-launch" placeholder="launch.mp3">
-      <label>Бунт ИИ (URL):</label>
-      <input type="text" id="snd-mutiny" placeholder="mutiny.mp3">
-      <label>Гибель страны (URL):</label>
-      <input type="text" id="snd-death" placeholder="death.mp3">
-      <label>Звук выбора производства (URL):</label>
-      <input type="text" id="snd-prod" placeholder="prod.mp3">
-      <button id="btn-save-sounds">Сохранить аудио-настройки</button>
-    </div>
-  </div>
-
-  <!-- ОБЩИЙ ЭКРАН (МОНИТОР) -->
-  <div id="screen-screen" class="role-section">
-    <div class="panel" style="text-align: center;">
-      <h1 class="neon-text">СТАТУС ВОЕННОГО МИРА</h1>
-      <h2>Раунд <span id="s-round">1</span> — Фаза <span id="s-phase" style="color:var(--warning)">ЛОББИ</span></h2>
-    </div>
-
-    <div class="grid" id="s-players-grid"></div>
-
-    <div id="s-asteroid-panel" class="panel panel-danger" style="display: none; text-align: center;">
-      <h2 style="color: var(--secondary); text-shadow: 0 0 10px var(--secondary);">ОПАСНОСТЬ: АСТЕРОИД ПОДЛЕТАЕТ!</h2>
-      <p>Требуется попаданий: <strong id="s-asteroid-hp" style="font-size: 1.5em; color: var(--primary)">10</strong></p>
-    </div>
-  </div>
-
-  <!-- AUDIO ELEMENTS -->
-  <audio id="audio-player" loop></audio>
-
-  <!-- FIREBASE SCRIPTS -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, set, get, update, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBQA2lk1GPe4doxsgRwTCzEB7gcYJQ3R4w",
-      authDomain: "millitoryworld2.firebaseapp.com",
-      databaseURL: "https://millitoryworld2-default-rtdb.firebaseio.com",
-      projectId: "millitoryworld2",
-      storageBucket: "millitoryworld2.firebasestorage.app",
-      messagingSenderId: "359516110855",
-      appId: "1:359516110855:web:f6f882e04457309f956aa2",
-      measurementId: "G-4NP4PTV63V"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-
-    let roomCode = "";
-    let role = "";
-    let myNick = "";
-    let selectedProdType = "abm";
-    let isHiddenModeActive = false;
-
-    // Смена полей ввода роли
-    document.getElementById("role-select").addEventListener("change", (e) => {
-      document.getElementById("player-inputs").style.display = e.target.value === "player" ? "block" : "none";
-      document.getElementById("master-inputs").style.display = e.target.value === "master" ? "block" : "none";
-    });
-
-    // ПОДКЛЮЧЕНИЕ
-    document.getElementById("btn-connect").addEventListener("click", async () => {
-      roomCode = document.getElementById("room-code").value.trim().toUpperCase();
-      role = document.getElementById("role-select").value;
-      myNick = document.getElementById("nickname").value.trim();
-      const pass = document.getElementById("master-password").value.trim();
-
-      if (!roomCode) { alert("Укажите комнату!"); return; }
-
-      const rRef = ref(db, `rooms/${roomCode}`);
-      const snap = await get(rRef);
-      let rData = snap.val();
-
-      if (!rData) {
-        rData = {
-          state: "lobby",
-          round: 1,
-          players: {},
-          masterConnected: false,
-          screenConnected: false,
-          arsenalClaimedBy: "",
-          asteroidHP: 10,
-          soundSettings: { bg: "", launch: "", mutiny: "", death: "", prod: "" }
-        };
-        await set(rRef, rData);
-      }
-
-      if (role === "player") {
-        if (!myNick) { alert("Введите никнейм!"); return; }
-        let players = rData.players || {};
-        if (Object.keys(players).length >= 5 && !players[myNick]) {
-          alert("Максимум 5 игроков!");
-          return;
-        }
-        if (!players[myNick]) {
-          players[myNick] = {
-            username: myNick,
-            hp: 3, nukes: 1, abms: 1, alive: true,
-            productionChoice: "abm", nukesLaunched: 0, target: "",
-            hiddenMode: false, hiddenRoundsLeft: 0,
-            aiModel: "none", aiStatus: "friendly", submitted: false
-          };
-          await update(ref(db, `rooms/${roomCode}/players`), players);
-        }
-      } else if (role === "master") {
-        if (pass !== "Ron") { alert("Неверный пароль Мастера!"); return; }
-        await update(rRef, { masterConnected: true });
-      } else if (role === "screen") {
-        await update(rRef, { screenConnected: true });
-      }
-
-      // Переключаем экран
-      document.getElementById("connect-screen").style.display = "none";
-      document.getElementById(`${role}-screen`).style.display = "block";
-
-      // Слушаем изменения
-      onValue(rRef, (snapshot) => {
-        if (snapshot.exists()) {
-          const updatedData = snapshot.val();
-          syncGame(updatedData);
-        }
-      });
-    });
-
-    // Выбор производства (для Игрока)
-    window.selectProd = function(type) {
-      selectedProdType = type;
-      document.getElementById("prod-abm").classList.toggle("active", type === "abm");
-      document.getElementById("prod-nuke").classList.toggle("active", type === "nuke");
-      playSound("prod");
-    };
-
-    // Тайный Арсенал
-    document.getElementById("btn-arsenal").addEventListener("click", async () => {
-      const snap = await get(ref(db, `rooms/${roomCode}`));
-      const data = snap.val();
-      if (!data.arsenalClaimedBy) {
-        await update(ref(db, `rooms/${roomCode}`), { arsenalClaimedBy: myNick });
-        await update(ref(db, `rooms/${roomCode}/players/${myNick}`), {
-          abms: (data.players[myNick].abms || 0) + 2,
-          nukes: (data.players[myNick].nukes || 0) + 5
-        });
-      }
-    });
-
-    // Скрытый режим
-    document.getElementById("btn-hidden-toggle").addEventListener("click", () => {
-      isHiddenModeActive = !isHiddenModeActive;
-      document.getElementById("btn-hidden-toggle").innerText = isHiddenModeActive ? "Выйти из скрытого режима" : "Объявить скрытый режим";
-    });
-
-    // Отправка хода
-    document.getElementById("btn-submit-turn").addEventListener("click", async () => {
-      const nToLaunch = parseInt(document.getElementById("nukes-to-launch").value) || 0;
-      const target = document.getElementById("target-select").value;
-      const aiMod = document.getElementById("ai-select") ? document.getElementById("ai-select").value : "none";
-
-      const snap = await get(ref(db, `rooms/${roomCode}/players/${myNick}`));
-      const p = snap.val();
-
-      if (nToLaunch > p.nukes) {
-        alert("Недостаточно ядерных ракет!");
-        return;
-      }
-
-      await update(ref(db, `rooms/${roomCode}/players/${myNick}`), {
-        productionChoice: selectedProdType,
-        nukesLaunched: nToLaunch,
-        target: target,
-        hiddenMode: isHiddenModeActive,
-        aiModel: aiMod !== "none" ? aiMod : (p.aiModel || "none"),
-        submitted: true
-      });
-
-      document.getElementById("player-planning-panel").style.display = "none";
-      document.getElementById("player-wait-panel").style.display = "block";
-    });
-
-    // Ведущий: смена фаз
-    document.getElementById("btn-next-phase").addEventListener("click", async () => {
-      const snap = await get(ref(db, `rooms/${roomCode}`));
-      const data = snap.val();
-      const states = ["lobby", "planning", "resolution"];
-      let nextIdx = (states.indexOf(data.state) + 1) % states.length;
-      let nextState = states[nextIdx];
-      let nextRound = data.round;
-
-      if (nextState === "lobby") {
-        nextRound += 1;
-        // Начисление ресурсов в начале раунда
-        const players = data.players || {};
-        for (let name in players) {
-          if (players[name].alive) {
-            let base = 1;
-            if (players[name].hiddenMode) base += 2;
-            if (players[name].aiModel === "moderate") base += 2;
-            if (players[name].aiModel === "unrestrained") base += 4;
-
-            let addAbm = players[name].productionChoice === "abm" ? base : 0;
-            let addNuke = players[name].productionChoice === "nuke" ? base : 0;
-
-            await update(ref(db, `rooms/${roomCode}/players/${name}`), {
-              abms: (players[name].abms || 0) + addAbm,
-              nukes: (players[name].nukes || 0) + addNuke - (players[name].nukesLaunched || 0),
-              nukesLaunched: 0,
-              submitted: false
-            });
-          }
-        }
-      }
-
-      await update(ref(db, `rooms/${roomCode}`), { state: nextState, round: nextRound });
-    });
-
-    // Мастер: Аудиосохранение
-    document.getElementById("btn-save-sounds").addEventListener("click", () => {
-      const paths = {
-        bg: document.getElementById("snd-bg").value,
-        launch: document.getElementById("snd-launch").value,
-        mutiny: document.getElementById("snd-mutiny").value,
-        death: document.getElementById("snd-death").value,
-        prod: document.getElementById("snd-prod").value
-      };
-      update(ref(db, `rooms/${roomCode}/soundSettings`), paths);
-    });
-
-    // СИНХРОНИЗАЦИЯ ИГРЫ (ОБЩАЯ)
-    let audioSettings = {};
-    function syncGame(data) {
-      audioSettings = data.soundSettings || {};
-      
-      // Фоновая музыка
-      if (audioSettings.bg) {
-        const audioEl = document.getElementById("audio-player");
-        if (audioEl.src !== audioSettings.bg) {
-          audioEl.src = audioSettings.bg;
-          audioEl.play().catch(() => {});
-        }
-      }
-
-      // Обновление ролей
-      if (role === "player") {
-        const p = data.players[myNick];
-        if (p) {
-          document.getElementById("p-name").innerText = p.username;
-          document.getElementById("p-hp").innerText = p.hp;
-          document.getElementById("p-nukes").innerText = p.nukes;
-          document.getElementById("p-abms").innerText = p.abms;
-          document.getElementById("p-status").innerText = p.hp > 0 ? "АКТИВНА" : "УНИЧТОЖЕНА";
-          document.getElementById("p-status").className = `badge ${p.hp > 0 ? 'badge-ok' : 'badge-dead'}`;
-
-          // Скрытый арсенал
-          const claimBtn = document.getElementById("btn-arsenal");
-          if (!data.arsenalClaimedBy) {
-            claimBtn.style.display = "block";
-          } else {
-            claimBtn.style.display = "none";
-          }
-
-          // Показ планирования
-          if (data.state === "planning" && !p.submitted && p.hp > 0) {
-            document.getElementById("player-planning-panel").style.display = "block";
-            document.getElementById("player-wait-panel").style.display = "none";
-
-            // Скрытый режим (со 2 раунда)
-            document.getElementById("btn-hidden-toggle").style.display = data.round >= 2 ? "block" : "none";
-
-            // AI модель выбор (3 раунд)
-            document.getElementById("ai-model-selection").style.display = data.round === 3 ? "block" : "none";
-
-            // Выбор целей
-            const tSel = document.getElementById("target-select");
-            tSel.innerHTML = "<option value='asteroid'>Астероид</option>";
-            for (let name in data.players) {
-              if (name !== myNick && data.players[name].hp > 0) {
-                tSel.innerHTML += `<option value="${name}">${name}</option>`;
-              }
-            }
-          } else {
-            document.getElementById("player-planning-panel").style.display = "none";
-          }
-        }
-      }
-
-      if (role === "master") {
-        document.getElementById("m-round-num").innerText = data.round;
-        document.getElementById("m-phase-name").innerText = data.state;
-        document.getElementById("btn-next-phase").innerText = data.state === "lobby" ? "Начать планирование" : (data.state === "planning" ? "Перейти к разрешению" : "Завершить раунд");
-
-        const plist = document.getElementById("m-players-list");
-        plist.innerHTML = "";
-        let count = 0;
-        for (let name in data.players) {
-          const p = data.players[name];
-          count++;
-          plist.innerHTML += `
-            <div class="flex-between" style="padding:5px 0; border-bottom:1px solid #222">
-              <span>${p.username} (HP: ${p.hp}, ЯБ: ${p.nukes}) [${p.submitted ? 'ГОТОВ' : 'ДУМАЕТ'}]</span>
-              <span>${p.hiddenMode ? '<b>[СКРЫТ]</b>' : ''}</span>
-            </div>`;
-        }
-        document.getElementById("m-player-count").innerText = count;
-
-        // Панель разрешения
-        if (data.state === "resolution") {
-          document.getElementById("master-resolution-panel").style.display = "block";
-          const resPanel = document.getElementById("m-launches-list");
-          resPanel.innerHTML = "";
-          for (let name in data.players) {
-            const p = data.players[name];
-            if (p.nukesLaunched > 0) {
-              resPanel.innerHTML += `
-                <div style="border: 1px solid var(--primary); padding:10px; margin-bottom:10px;">
-                  <strong>${p.username}</strong> запускает <strong>${p.nukesLaunched} ЯБ</strong> по <strong>${p.target}</strong>
-                  <div style="margin-top: 5px;">
-                    <button style="width:auto; padding: 2px 10px;" onclick="resolveHit('${name}', '${p.target}', 1)">Попадание d20</button>
-                    <button style="width:auto; padding: 2px 10px;" class="btn-danger" onclick="resolveHit('${name}', '${p.target}', 0)">Промах/Сбито</button>
-                  </div>
-                </div>`;
-            }
-          }
-        } else {
-          document.getElementById("master-resolution-panel").style.display = "none";
-        }
-      }
-
-      if (role === "screen") {
-        document.getElementById("s-round").innerText = data.round;
-        document.getElementById("s-phase").innerText = data.state.toUpperCase();
-
-        const sGrid = document.getElementById("s-players-grid");
-        sGrid.innerHTML = "";
-        for (let name in data.players) {
-          const p = data.players[name];
-          const isDead = p.hp <= 0;
-          sGrid.innerHTML += `
-            <div class="panel ${isDead ? 'panel-danger' : ''}">
-              <h3>${p.username}</h3>
-              <p>Жизни: ${isDead ? 'УНИЧТОЖЕН' : p.hp}</p>
-              <p>ЯБ: ${p.hiddenMode ? '?' : p.nukes}</p>
-              <p>ПРО: ${p.hiddenMode ? '?' : p.abms}</p>
-              <p>${p.hiddenMode ? '<b>РЕЖИМ ТИШИНЫ</b>' : 'ОТКРЫТ'}</p>
-            </div>`;
-        }
-
-        if (data.round >= 6) {
-          document.getElementById("s-asteroid-panel").style.display = "block";
-          document.getElementById("s-asteroid-hp").innerText = data.asteroidHP || 10;
-        } else {
-          document.getElementById("s-asteroid-panel").style.display = "none";
-        }
-      }
-    }
-
-    // Обработка Мастером попаданий ядерных ударов
-    window.resolveHit = async function(attacker, target, success) {
-      const snap = await get(ref(db, `rooms/${roomCode}`));
-      const data = snap.val();
-
-      if (success && target !== "asteroid") {
-        const targetHP = data.players[target].hp - 1;
-        await update(ref(db, `rooms/${roomCode}/players/${target}`), { hp: Math.max(0, targetHP) });
-        if (targetHP <= 0) {
-          playSound("death");
-        }
-      } else if (success && target === "asteroid") {
-        const astHP = (data.asteroidHP || 10) - 1;
-        await update(ref(db, `rooms/${roomCode}`), { asteroidHP: Math.max(0, astHP)No response
+      <!-- Карта и Статус астероида -->
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+        <div>
+          <h3>Статистика выживших государств</h3>
+          <table>
+            <thead>
+              <tr>
+                No response
